@@ -1,0 +1,1 @@
+{"block_with_hash": "# not a comment\nx\n", "colon_in_value": "a: b is fine", "dashed-key": "ok", "double": "tab\there \"q\" back\\slash", "folded_strip": "a b", "hash_no_space": "C#sharp", "key with spaces": "ok", "literal": "line one\n  indented line\nline three\n", "literal_strip": "no trailing newline", "single": "it's", "time": "12:30", "url": "https://cern.ch/x?y=1"}

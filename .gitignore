@@ -1,0 +1,11 @@
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+__pycache__/
+*.pyc
+
+# Analyses are content, not code: keep only the protective .htaccess.
+public/analyses/*
+!public/analyses/.htaccess

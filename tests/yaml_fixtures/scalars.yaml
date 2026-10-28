@@ -1,0 +1,20 @@
+colon_in_value: a: b is fine
+url: https://cern.ch/x?y=1
+time: 12:30
+hash_no_space: C#sharp
+single: 'it''s'
+double: "tab\there \"q\" back\\slash"
+literal: |
+  line one
+    indented line
+  line three
+literal_strip: |-
+  no trailing newline
+folded_strip: >-
+  a
+  b
+block_with_hash: |
+  # not a comment
+  x
+key with spaces: ok
+dashed-key: ok

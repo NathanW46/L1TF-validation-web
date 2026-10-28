@@ -1,0 +1,21 @@
+---
+plain_list:
+  - one
+  - two words
+  - "quoted # not a comment"
+  - http://example.com/a#frag
+same_indent_list:
+- a
+- b
+after: done
+empty_inline: []
+nested:
+  inner:
+    deep: value
+  other: x
+list_of_maps_nested:
+  - name: a
+    tags:
+      - t1
+      - t2
+  - name: b

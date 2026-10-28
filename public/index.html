@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L1TF Validation</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle analysis menu" aria-controls="nav" aria-expanded="true">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+  <a class="brand" href="#">L1TF Validation</a>
+</header>
+
+<div class="layout">
+  <nav id="nav" class="sidebar" aria-label="Analyses">
+    <div class="nav-tools">
+      <input id="nav-search" type="search" placeholder="Search analyses and plots" autocomplete="off" aria-label="Search analyses and plots">
+      <div class="nav-opts">
+        <div class="seg" role="group" aria-label="Grouping">
+          <button data-group="author">By author</button>
+          <button data-group="none">All</button>
+        </div>
+        <div class="seg" role="group" aria-label="Sort order">
+          <button data-sort="date">Newest</button>
+          <button data-sort="name">A–Z</button>
+        </div>
+      </div>
+    </div>
+    <div id="nav-list" class="nav-list"></div>
+    <div class="nav-foot">
+      <a href="#help">How to add your analysis</a>
+      <a href="#contact">Report a bug / contact</a>
+    </div>
+  </nav>
+  <div id="scrim" class="scrim" hidden></div>
+
+  <main id="main" tabindex="-1"></main>
+</div>
+
+<div id="lightbox" class="lightbox" hidden>
+  <div class="lb-inner" role="dialog" aria-modal="true" aria-labelledby="lb-title">
+    <div class="lb-head">
+      <span id="lb-title" class="lb-title"></span>
+      <span class="lb-actions">
+        <span id="lb-links"></span>
+        <button id="lb-close" class="icon-btn" aria-label="Close">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </span>
+    </div>
+    <div id="lb-body" class="lb-body">
+      <button id="lb-prev" class="lb-nav" aria-label="Previous plot">&#8249;</button>
+      <div id="lb-view" class="lb-view"></div>
+      <button id="lb-next" class="lb-nav" aria-label="Next plot">&#8250;</button>
+    </div>
+    <div id="lb-foot" class="lb-foot"></div>
+  </div>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

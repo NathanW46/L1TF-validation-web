@@ -1,0 +1,6 @@
+# Downloads for contributors: serve as plain text, never execute.
+Options -ExecCGI
+RemoveHandler .py
+<FilesMatch "\.(?i:py|yaml)$">
+    ForceType text/plain
+</FilesMatch>

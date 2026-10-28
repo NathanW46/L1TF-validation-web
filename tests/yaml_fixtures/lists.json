@@ -1,0 +1,1 @@
+{"after": "done", "empty_inline": [], "list_of_maps_nested": [{"name": "a", "tags": ["t1", "t2"]}, {"name": "b"}], "nested": {"inner": {"deep": "value"}, "other": "x"}, "plain_list": ["one", "two words", "quoted # not a comment", "http://example.com/a#frag"], "same_indent_list": ["a", "b"]}

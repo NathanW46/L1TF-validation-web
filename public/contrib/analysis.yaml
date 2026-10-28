@@ -1,0 +1,38 @@
+# analysis.yaml — optional info shown at the top of your analysis on the plots site.
+# Put it in the top folder of your analysis. Every field is optional; delete what you don't need.
+# Check it with:  python3 check_analysis.py <your-folder>/
+# Or skip editing by hand: python3 make_analysis_yaml.py <your-folder>/ asks
+# questions and writes this file for you.
+
+title: Short title                        # default: the folder name
+author: Your Name                         # the menu groups analyses by this
+date: 2026-10-27                          # YYYY-MM-DD; default: date of the newest file
+cmssw: CMSSW_20_1_0_pre1
+tags: [displaced, efficiency]             # searchable keywords
+
+description: >
+  A few sentences about what this is. Lines are joined into one paragraph;
+  leave a blank line to start a new one. More info can be included in notes.md
+
+samples:                                  # one "- label:" block per sample
+  - label: Baseline
+    path: DAS/path
+    events: 1000
+  - label: With some change
+    path: DAS/path
+
+selection:                                # cuts, shown as a table with rows for
+  pt: "> 2 GeV"                           # eta, z0, d0, pT, Lxy and Lz (missing = "no cut");
+  eta: "< 2.4"                            # keys like pT, p_T, dxy, dz also work.
+  d0: "< 10 cm"                           # Quote the cut if it starts with > or |.
+  z0: "< 30 cm"
+  nstub: ">= 4"                           # any other cut becomes an extra row
+
+# Any other "key: value" lines are shown in a Details table, e.g.
+# resolution method: half-width of the central 68% interval
+#
+# Longer notes (markdown) can go in a notes.md 
+# It is shown above the plots.
+#
+# Tips: values containing " #" or starting with [ { & * ! " ' need quotes, e.g.
+#   title: "Run #3 study"

@@ -1,0 +1,22 @@
+# A complete example
+title: Displaced tracking with PR383+PR391
+author: Nathan Whittington   # trailing comment
+date: 2026-10-19
+cmssw: CMSSW_15_1_0_pre3
+tags: [displaced, "PR391", 'nstub fix', 2026]
+description: >
+  Efficiency and resolution,
+  nstub fix vs PR383+PR391.
+
+  Second paragraph.
+samples:
+  - label: SIM Disp.
+    path: /eos/user/n/nwhittin/data/nstub_fix.root
+    events: 1000
+  - label: "SIM Disp + PR383-PR391"
+    path: root://eosuser.cern.ch//eos/user/n/nwhittin/PR391.root
+links:
+  - label: PR391
+    url: https://github.com/cms-L1TK/cmssw/pull/391
+empty_value:
+nothing: ~

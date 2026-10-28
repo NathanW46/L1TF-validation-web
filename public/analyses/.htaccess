@@ -1,0 +1,19 @@
+# Uploaded analyses are plain files: never run anything in here.
+# (If this folder ever returns "500 Internal Server Error" on webeos, the
+# server doesn't allow one of these directives; remove that line.)
+Options -ExecCGI -Indexes
+<FilesMatch "\.(?i:php\d?|phtml|phar|phps|cgi|pl|fcgi|svgz?)$">
+    Require all denied
+</FilesMatch>
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+RemoveHandler .py .sh .cgi .pl
+# SVGs are blocked above: opened directly they could run scripts on this site.
+# Uploaded HTML could too, so it is served as plain text.
+<FilesMatch "\.(?i:html?|xhtml|shtml)$">
+    ForceType text/plain
+</FilesMatch>
