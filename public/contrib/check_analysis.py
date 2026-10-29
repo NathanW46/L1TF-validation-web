@@ -403,7 +403,7 @@ def check_meta(meta):
     tags = meta.get("tags")
     if tags is not None and not isinstance(tags, (str, list)):
         out.append(("error", "'tags' should be a list like [a, b]"))
-    for key, required in (("samples", "label"), ("links", "url")):
+    for key, required in (("inputs", "label"), ("links", "url")):
         v = meta.get(key)
         if v is None:
             continue
@@ -412,8 +412,8 @@ def check_meta(meta):
             continue
         for n, item in enumerate(v, 1):
             if not isinstance(item, dict):
-                if key == "samples" and isinstance(item, str):
-                    continue   # a bare sample name is fine
+                if key == "inputs" and isinstance(item, str):
+                    continue   # a bare input name is fine
                 out.append(("error", f"{key} entry {n} should be '{required}: ...' lines"))
             elif not _is_str(item.get(required)):
                 out.append(("error", f"{key} entry {n} has no '{required}'"))

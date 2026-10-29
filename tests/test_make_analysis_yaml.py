@@ -51,11 +51,11 @@ with tempfile.TemporaryDirectory() as tmp:
         ".",                                  # paragraph break
         "Second paragraph: with colon # and hash.",
         "",                                   # end description
-        "",                                   # add a sample? (default yes)
-        "SIM Disp.", "/eos/user/x/a.root", "1,000",
-        "y",                                  # another sample
-        "> weird label", "root://eosuser.cern.ch//eos/b.root", "",
-        "n",                                  # no more samples
+        "",                                   # add an input? (default yes)
+        "SIM Disp.", "HYBRID_DISPLACED", "SUSY 200PU", "/RelValX/Y-v1/GEN-SIM", "1,000",
+        "y",                                  # another input
+        "> weird label", "", "TTbar: #2", "", "",
+        "n",                                  # no more inputs
         "< 2.4", "", "< 1 cm", "> 2 GeV", "", "",   # eta z0 d0 pt lxy lz
         "y", "nstub", ">= 4",                 # extra cut
         "y", "bad: key", "chi2/dof", "< 10",  # invalid name re-prompted
@@ -81,17 +81,18 @@ with tempfile.TemporaryDirectory() as tmp:
            "First line of text, continued with leading spaces.\nSecond paragraph: with colon # and hash.\n")
     long_para = text.split("description: >\n", 1)[1]
     expect("description written as indented lines", long_para.startswith("  First line of text, continued"), True)
-    expect("samples", meta.get("samples"), [
-        {"label": "SIM Disp.", "path": "/eos/user/x/a.root", "events": "1000"},
-        {"label": "> weird label", "path": "root://eosuser.cern.ch//eos/b.root"},
+    expect("inputs", meta.get("inputs"), [
+        {"label": "SIM Disp.", "algo": "HYBRID_DISPLACED", "mc_sample": "SUSY 200PU",
+         "mc_path": "/RelValX/Y-v1/GEN-SIM", "events": "1000"},
+        {"label": "> weird label", "mc_sample": "TTbar: #2"},
     ])
     expect("selection", meta.get("selection"),
            {"eta": "< 2.4", "d0": "< 1 cm", "pt": "> 2 GeV", "nstub": ">= 4", "chi2/dof": "< 10"})
     expect("details", meta.get("resolution method"), "68% interval")
 
     # ---- 2. re-run, Enter everywhere: nothing changes ------------------------
-    rerun = [""] * 6 + [""]                # title..tags + description (keep), keep samples (Y)
-    rerun += ["n"]                          # no extra sample
+    rerun = [""] * 6 + [""]                # title..tags + description (keep), keep inputs (Y)
+    rerun += ["n"]                          # no extra input
     rerun += [""] * 6                       # standard cuts keep
     rerun += ["", ""]                       # keep extra cuts nstub, chi2/dof
     rerun += ["n"]                          # no more cuts
@@ -115,7 +116,7 @@ with tempfile.TemporaryDirectory() as tmp:
     folder2 = os.path.join(tmp, "bare-cuts")
     os.mkdir(folder2)
     r = run(folder2, ["", "", "", "", "", "",   # title..tags, description
-                      "n",                      # no samples
+                      "n",                      # no inputs
                       "2.4", "",                # |eta| 2.4 -> accept suggested "< 2.4"
                       "15", "n", "y",           # |z0| 15 -> decline "< 15", keep as typed
                       "",                       # |d0| no cut

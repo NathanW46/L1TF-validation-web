@@ -3,7 +3,7 @@
 
     python3 make_analysis_yaml.py my-analysis/
 
-Asks for the title, author, date, CMSSW version, tags, description, samples
+Asks for the title, author, date, CMSSW version, tags, description, inputs
 and selection cuts, shows the result, and writes my-analysis/analysis.yaml.
 Press Enter to accept the [default] shown or to skip a question. If the
 folder already has an analysis.yaml, its values are offered as defaults, so
@@ -40,7 +40,9 @@ CUT_VARS = [("eta", "|eta|"), ("z0", "|z0|"), ("d0", "|d0|"),
 USUAL_OP = {"eta": "<", "z0": "<", "d0": "<", "pt": ">", "lxy": "<", "lz": "<"}
 # A cut "says which way" if it has a comparison or a range in it.
 HAS_OP = re.compile(r"[<>≤≥=±]|\b(in|to|between|max|min|above|below)\b|\d\s*-\s*\d", re.I)
-KNOWN = {"title", "author", "date", "cmssw", "tags", "description", "samples", "selection", "links"}
+KNOWN = {"title", "author", "date", "cmssw", "tags", "description", "inputs", "selection", "links"}
+# Standard keys of an `inputs:` entry, in the order they are written.
+INPUT_KEYS = ("label", "algo", "mc_sample", "mc_path", "events")
 
 
 class Abort(Exception):
@@ -171,12 +173,13 @@ def to_yaml(m):
                 out.append("")
             out += ["  " + line for line in textwrap.wrap(para, 76, break_long_words=False,
                                                            break_on_hyphens=False)]
-    if m.get("samples"):
-        out.append("samples:")
-        for s in m["samples"]:
+    if m.get("inputs"):
+        out.append("inputs:")
+        for s in m["inputs"]:
+            keys = [k for k in INPUT_KEYS if k in s] + [k for k in s if k not in INPUT_KEYS]
             first = True
-            for k in ("label", "path", "events"):
-                if s.get(k):
+            for k in keys:
+                if isinstance(s[k], str) and s[k]:
                     out.append(("  - " if first else "    ") + f"{k}: {scalar(s[k])}")
                     first = False
     if m.get("selection"):
@@ -249,17 +252,21 @@ def interview(folder, old):
     m["description"] = ask_lines("Description: a few sentences about the study. "
                                  "Type a single '.' line to start a new paragraph", s(old, "description"))
 
-    print("\n== Samples ==")
-    samples = []
-    old_samples = [x for x in (old.get("samples") or []) if isinstance(x, (dict, str))]
-    if old_samples and yes(f"Keep the {len(old_samples)} existing sample(s)?"):
-        samples = [x if isinstance(x, dict) else {"label": x} for x in old_samples]
-    while yes("Add a sample?" if not samples else "Add another sample?", default=not samples):
+    print("\n== Inputs (one per line in the plot legend) ==")
+    inputs = []
+    old_inputs = [x for x in (old.get("inputs") or []) if isinstance(x, (dict, str))]
+    if old_inputs and yes(f"Keep the {len(old_inputs)} existing input(s)?"):
+        inputs = [{k: v for k, v in x.items() if isinstance(v, str)} if isinstance(x, dict)
+                  else {"label": x} for x in old_inputs]
+    while yes("Add an input?" if not inputs else "Add another input?", default=not inputs):
         label = ask("  Label (as in the plot legend)", required=True)
-        path = ask("  Path or EOS URL of the input file")
+        algo = ask("  Algo (track-finding algorithm, e.g. HYBRID, HYBRID_DISPLACED)")
+        mc = ask("  MC sample, short name (e.g. SUSY 200PU)")
+        mc_path = ask("  MC dataset, full DAS name (/Primary/Processed/TIER; the site links it to DAS)")
         events = ask("  Number of events", check=check_int).replace(",", "")
-        samples.append({"label": label, "path": path, "events": events})
-    m["samples"] = samples
+        inputs.append({"label": label, "algo": algo, "mc_sample": mc, "mc_path": mc_path,
+                       "events": events})
+    m["inputs"] = inputs
 
     print("\n== Selection cuts ==")
     print("Write each cut as it should read, including < or >, e.g. '< 2.4' or '> 2 GeV'. Enter = no cut.")

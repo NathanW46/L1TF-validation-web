@@ -50,9 +50,12 @@ title: Full example
 author: Tester
 date: 2026-10-28
 tags: [example]
-samples:
+inputs:
   - label: SIM Disp.
-    path: /eos/user/x/sample.root
+    algo: HYBRID_DISPLACED
+    mc_sample: SUSY 200PU
+    mc_path: /RelValDisplacedSUSY_14TeV/X-v1/GEN-SIM-DIGI-RAW
+    events: 1000
 selection:
   eta: "< 2.4"
   pt: "> 2 GeV"
@@ -119,7 +122,7 @@ check "get: metadata, notes, plots grouped by stem, files" \
    and sum(len(p['formats']) == 2 for p in d['plots']) == 2 \
    and sorted(p['dir'] for p in d['plots']) == ['efficiency', 'efficiency', 'resolution'] \
    and sorted(f['path'] for f in d['files']) == ['data.root', 'resolution.root'] \
-   and d['meta']['samples'][0]['label'] == 'SIM Disp.' and d['meta']['selection']['pt'] == '> 2 GeV'" \
+   and d['meta']['inputs'][0]['label'] == 'SIM Disp.' and d['meta']['inputs'][0]['mc_sample'] == 'SUSY 200PU' and d['meta']['selection']['pt'] == '> 2 GeV'" \
   "$U/api.php?action=get&id=full-example"
 check "get: plot urls resolve" \
   "s == 200 and all(u.startswith('analyses/full-example/') for p in d['plots'] for u in p['formats'].values())" \

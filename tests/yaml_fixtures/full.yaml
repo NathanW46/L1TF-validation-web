@@ -9,7 +9,7 @@ description: >
   nstub fix vs PR383+PR391.
 
   Second paragraph.
-samples:
+inputs:
   - label: SIM Disp.
     path: /eos/user/n/nwhittin/data/nstub_fix.root
     events: 1000

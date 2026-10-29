@@ -7,7 +7,7 @@ appears straight away. There's no build step and no registration.
 
 ```
 my-analysis/                    <- the folder name becomes the analysis id in links
-  analysis.yaml                 <- optional: title, author, date, CMSSW, samples, ...
+  analysis.yaml                 <- optional: title, author, date, CMSSW, inputs, ...
   notes.md                      <- optional: shown above the plots (Markdown)
   efficiency/                   <- each folder of plots is a separate section on the webpage
     eff_vs_eta_mind0-0p2.pdf
@@ -42,7 +42,8 @@ python3 make_analysis_yaml.py my-analysis/
 
 It asks, in order:
 - **About the analysis:** title, author, date, CMSSW version, tags, description.
-- **Samples:** label, file path and number of events for each.
+- **Inputs** (one per line in the plot legend): label, algo, MC sample (short name), MC dataset
+  (full DAS name) and number of events for each.
 - **Selection cuts:** |η|, |z0|, |d0|, pT, Lxy, Lz, then any extra cuts (e.g. nstub).
 - **Details:** anything else, e.g. "resolution method".
 
@@ -80,9 +81,12 @@ cmssw: CMSSW_15_1_0_pre3
 tags: [displaced, efficiency]
 description: >
   Description about the study.
-samples:
-  - label: Baseline
-    path: DAS/path
+inputs:                                    # shown as an "Inputs" table
+  - label: Baseline                        # as in the plot legend (the only required key)
+    algo: HYBRID_DISPLACED
+    mc_sample: SUSY 200PU                    # short name shown in the table...
+    mc_path: /RelValDisplacedSUSY_14TeV/<processed>/GEN-SIM-DIGI-RAW   # ...linked to this dataset in DAS
+    events: 1000
 selection:                                 # shown as a "Selection cuts" table
   pt: "> 2 GeV"
   eta: "< 2.4"

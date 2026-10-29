@@ -23,7 +23,7 @@ const LIBS = {
 const IMAGE_EXTS = ["png", "jpg", "jpeg", "gif", "webp"];
 // analysis.yaml keys with their own place on the page; the rest go in Details.
 // ("links" is accepted but no longer shown.)
-const KNOWN_KEYS = new Set(["title", "author", "date", "cmssw", "tags", "description", "samples", "selection", "links"]);
+const KNOWN_KEYS = new Set(["title", "author", "date", "cmssw", "tags", "description", "inputs", "selection", "links"]);
 const PDF_CONCURRENCY = 3;
 
 // ---------------------------------------------------------------- helpers
@@ -320,15 +320,57 @@ function renderValue(v) {
     `<tr><td>${esc(k)}</td><td>${renderValue(x)}</td></tr>`).join("")}</table>`;
 }
 
-function samplesPanel(samples) {
-  if (!Array.isArray(samples) || !samples.length) return "";
-  const rows = samples.map((s) => (s && typeof s === "object" && !Array.isArray(s)) ? s : { label: s });
-  const cols = ["label", "path", "events"].filter((c) => rows.some((r) => c in r));
-  for (const r of rows) for (const k of Object.keys(r)) if (!cols.includes(k)) cols.push(k);
-  return `<section class="panel"><h2>Samples</h2><div class="table-wrap"><table class="samples">
-    <tr>${cols.map((c) => `<th>${esc(c)}</th>`).join("")}</tr>
-    ${rows.map((r) => `<tr>${cols.map((c) =>
-      `<td class="${c === "path" ? "mono" : ""}">${c in r ? renderValue(r[c]) : ""}</td>`).join("")}</tr>`).join("")}
+// `inputs:` as a table, one row per input (one line in the plot legend). The
+// standard columns come first, in this order, then any other keys.
+// mc_sample is a short name ("SUSY 200PU"); mc_path, the full DAS dataset name,
+// turns it into a link to DAS.
+const INPUT_COLS = [["label", "Label"], ["algo", "Algo"], ["mc_sample", "MC sample"], ["events", "Events"]];
+const INPUT_HIDDEN = new Set(["mc_path"]);   // shown as the MC sample link
+
+// A DAS dataset name looks like /Primary/Processed/TIER.
+const DATASET_RE = /^\/[^/\s]+\/[^/\s]+\/[A-Z0-9-]+$/;
+const dasUrl = (ds) => "https://cmsweb.cern.ch/das/request?input="
+  + encodeURIComponent("dataset=" + ds) + "&instance=prod/global";
+
+const filled = (v) => v !== undefined && v !== null && v !== "";
+
+function mcCell(r) {
+  const name = filled(r.mc_sample) ? r.mc_sample : null;
+  const p = typeof r.mc_path === "string" ? r.mc_path.trim() : "";
+  if (!p) return name === null ? "" : renderValue(name);
+  const href = isHttp(p) ? p : DATASET_RE.test(p) ? dasUrl(p) : null;
+  // Without a short name, fall back to the dataset's first part.
+  const text = typeof name === "string" ? name : (DATASET_RE.test(p) ? p.split("/")[1] : p);
+  return href
+    ? `<a href="${esc(href)}" target="_blank" rel="noopener" title="${esc(p)}">${esc(text)}</a>`
+    : `<span title="${esc(p)}">${esc(text)}</span>`;
+}
+
+function inputsPanel(inputs) {
+  if (!Array.isArray(inputs) || !inputs.length) return "";
+  const rows = inputs.map((s) => (s && typeof s === "object" && !Array.isArray(s)) ? s : { label: s });
+  const cols = INPUT_COLS.filter(([c]) => rows.some((r) => c in r || (c === "mc_sample" && "mc_path" in r)));
+  for (const r of rows) {
+    for (const k of Object.keys(r)) {
+      if (!INPUT_HIDDEN.has(k) && !cols.some(([c]) => c === k)) {
+        const h = k.replace(/_/g, " ");
+        cols.push([k, h.charAt(0).toUpperCase() + h.slice(1)]);   // pile_up -> Pile up
+      }
+    }
+  }
+  const cell = (r, c) => {
+    if (c === "mc_sample") return `<td class="nw">${mcCell(r)}</td>`;
+    if (!(c in r)) return "<td></td>";
+    const v = r[c];
+    if (c === "events" && /^\d+$/.test(String(v).trim())) {
+      return `<td class="num">${Number(String(v).trim()).toLocaleString("en-US")}</td>`;
+    }
+    return `<td class="${c === "label" ? "in-label" : c === "algo" ? "nw" : ""}">${renderValue(v)}</td>`;
+  };
+  const body = rows.map((r) => `<tr>${cols.map(([c]) => cell(r, c)).join("")}</tr>`).join("");
+  return `<section class="panel"><h2>Inputs</h2><div class="table-wrap"><table class="inputs">
+    ${cols.length ? `<tr>${cols.map(([c, h]) => `<th class="${c === "events" ? "num" : ""}">${esc(h)}</th>`).join("")}</tr>` : ""}
+    ${body}
   </table></div></section>`;
 }
 
@@ -469,7 +511,7 @@ function renderAnalysis() {
   const desc = typeof meta.description === "string" ? meta.description.trim() : "";
   const hasPdf = a.plots.some((p) => p.formats.pdf);
   const hasImg = a.plots.some((p) => IMAGE_EXTS.some((e) => p.formats[e]));
-  const panels = [samplesPanel(meta.samples), filesPanel(a.files), selectionPanel(meta.selection), detailsPanel(meta)]
+  const panels = [inputsPanel(meta.inputs), filesPanel(a.files), selectionPanel(meta.selection), detailsPanel(meta)]
     .filter(Boolean);
   a._common = commonWords(a.plots);
 
@@ -741,7 +783,7 @@ function helpHTML() {
         <code>resolution/d0_res_vs_eta_mind0-0p2.pdf</code>. Searching <code>d0 vs eta</code> finds it.
         If a PDF and a PNG have the same name, they are shown as one plot (PDF by default).</li>
       <li><strong>Optional:</strong> add an <code>analysis.yaml</code> with title, author, date, CMSSW version,
-        samples and selection cuts, and a <code>notes.md</code> that is shown above the plots.
+        inputs and selection cuts, and a <code>notes.md</code> that is shown above the plots.
         Either answer a few questions and let
         <a href="contrib/make_analysis_yaml.py" download>make_analysis_yaml.py</a> write it:
         <pre>curl -O ${esc(site)}contrib/make_analysis_yaml.py -O ${esc(site)}contrib/check_analysis.py

@@ -170,12 +170,18 @@ main { flex: 1; min-width: 0; padding: 20px 24px 48px; outline: none; }
 details.panel > summary { cursor: pointer; margin: 0; }
 details.panel[open] > summary { margin-bottom: 6px; }
 .table-wrap { overflow-x: auto; }
-table.kv, table.samples { border-collapse: collapse; font-size: 14px; }
-table.samples { width: 100%; }
-table.kv td, table.samples td, table.samples th {
+table.kv, table.inputs { border-collapse: collapse; font-size: 14px; }
+table.inputs { width: 100%; }
+table.kv td, table.inputs td, table.inputs th {
   padding: 3px 14px 3px 0; vertical-align: top; text-align: left;
 }
-table.samples th { font-size: 12px; color: var(--muted); font-weight: 600; }
+table.inputs th { font-size: 12px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--border); }
+table.inputs td { padding-top: 6px; }
+table.inputs .nw { white-space: nowrap; }
+table.inputs td { border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+table.inputs tr:last-child > td { border-bottom: 0; }
+table.inputs .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.inputs .in-label { font-weight: 600; white-space: nowrap; }
 table.kv td:first-child { color: var(--muted); white-space: nowrap; }
 td .mono, td.mono { overflow-wrap: anywhere; }
 .link-list { margin: 0; padding-left: 18px; }
@@ -355,7 +361,7 @@ td .mono, td.mono { overflow-wrap: anywhere; }
 
 /* files: always open; the list scrolls instead of making the box taller.
    `contain: size` on .file-box stops the list from setting the row height,
-   so the box is exactly as tall as its neighbour (e.g. Samples). */
+   so the box is exactly as tall as its neighbour (e.g. Inputs). */
 .panel.files { display: flex; flex-direction: column; }
 .file-box { position: relative; flex: 1 1 auto; min-height: 0; contain: size; }
 .file-scroll { position: absolute; inset: 0; overflow-y: auto; }
