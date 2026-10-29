@@ -803,13 +803,12 @@ python3 check_analysis.py my-analysis/</pre></li>
 
 function contactHTML() {
   return `<section class="help" id="contact">
-    <h2>Bugs, questions and changes</h2>
+    <h2>Problems or Suggestions?</h2>
     <ul>
-      <li><strong>Found a bug or have an idea?</strong>
+      <li><strong>Bugs and requests:</strong>
         <a href="${esc(REPO)}/issues" target="_blank" rel="noopener">Open an issue on GitHub</a>.</li>
-      <li><strong>Want to change the site?</strong> The code is at
-        <a href="${esc(REPO)}" target="_blank" rel="noopener">${esc(REPO.replace(/^https?:\/\//, ""))}</a>;
-        pull requests are welcome.</li>
+      <li><strong>Pull requests are welcome:</strong>
+        <a href="${esc(REPO)}" target="_blank" rel="noopener">${esc(REPO.replace(/^https?:\/\//, ""))}</a></li>
       <li><strong>Contact:</strong> ${esc(CONTACT.name)},
         <a href="mailto:${esc(CONTACT.email)}">${esc(CONTACT.email)}</a></li>
     </ul>
