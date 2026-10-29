@@ -84,9 +84,10 @@ description: >
 inputs:                                    # shown as an "Inputs" table
   - label: Baseline                        # as in the plot legend (the only required key)
     algo: HYBRID_DISPLACED
-    mc_sample: SUSY 200PU                    # short name shown in the table...
+    mc_sample: SUSY 200PU                  # short name shown in the table...
     mc_path: /RelValDisplacedSUSY_14TeV/<processed>/GEN-SIM-DIGI-RAW   # ...linked to this dataset in DAS
     events: 1000
+    # other can keys go here and will be added to the table
 selection:                                 # shown as a "Selection cuts" table
   pt: "> 2 GeV"
   eta: "< 2.4"

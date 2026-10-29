@@ -1,2 +1,11 @@
 DirectoryIndex index.html
 Options -Indexes
+
+# Make browsers check for a newer index.html / app.js / style.css on every
+# visit (a cheap "304 Not Modified" when nothing changed), so an update to the
+# site shows up straight away instead of after a hard refresh.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|js|css)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
